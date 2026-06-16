@@ -1,55 +1,58 @@
-const orders = require("../models/order.model");
+const productModel = require("../models/product.model");
 
-const users = require("../models/user.model");
+const userModel = require("../models/user.model");
 
-const products = require("../models/product.model");
+const orderModel = require("../models/order.model");
 
-function createOrder(userId, productId, quantity) {
-  const user = users.find((user) => user.id === Number(userId));
+async function createOrder(userId, productId, quantity) {
+  const user = await userModel.getUserById(userId);
 
   if (!user) {
-    return {
-      error: "User not found",
-    };
+    throw new Error("User not found");
   }
 
-  const product = products.find((product) => product.id === Number(productId));
+  const product = await productModel.getProductById(productId);
 
   if (!product) {
-    return {
-      error: "Product not found",
-    };
+    throw new Error("Product not found");
   }
 
   if (product.stock < quantity) {
-    return {
-      error: "Insufficient stock",
-    };
+    throw new Error("Insufficient Stock");
   }
 
-  product.stock -= quantity;
+  await productModel.updateProduct(productId, {
+    stock: product.stock - quantity,
+  });
 
   const order = {
-    id: orders.length + 1,
+    userId,
 
-    userId: user.id,
+    userName: user.name,
 
-    productId: product.id,
+    productId,
 
     productName: product.name,
 
     quantity,
 
+    price: product.price,
+
     totalPrice: quantity * product.price,
+
+    orderedAt: new Date(),
   };
 
-  orders.push(order);
+  const result = await orderModel.createOrder(order);
 
-  return order;
+  return {
+    _id: result.insertedId,
+    ...order,
+  };
 }
 
-function getAllOrders() {
-  return orders;
+async function getAllOrders() {
+  return await orderModel.getAllOrders();
 }
 
 module.exports = {

@@ -1,21 +1,21 @@
 const orderService = require("../services/order.service");
 
-function createOrder(req, res) {
-  const { userId, productId, quantity } = req.body;
+async function createOrder(req, res) {
+  try {
+    const { userId, productId, quantity } = req.body;
 
-  const order = orderService.createOrder(userId, productId, quantity);
+    const order = await orderService.createOrder(userId, productId, quantity);
 
-  if (order.error) {
-    return res.status(400).json({
-      message: order.error,
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
     });
   }
-
-  res.status(201).json(order);
 }
 
-function getAllOrders(req, res) {
-  const orders = orderService.getAllOrders();
+async function getAllOrders(req, res) {
+  const orders = await orderService.getAllOrders();
 
   res.json(orders);
 }

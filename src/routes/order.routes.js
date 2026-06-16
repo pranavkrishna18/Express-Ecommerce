@@ -1,11 +1,8 @@
-const express = require("express");
+const router = require("express").Router();
 
-const router = express.Router();
+const handler = require("../handlers/order.handler");
 
-const orderHandler = require("../handlers/order.handler");
-
-router.post("/", orderHandler.createOrder);
-
-router.get("/", orderHandler.getAllOrders);
+router.post("/", handler.createOrder);
+router.get("/", handler.getAllOrders);
 
 module.exports = router;

@@ -1,40 +1,30 @@
-const products = require("../models/product.model");
+const productModel = require("../models/product.model");
 
-function createProduct(productData) {
-  const newProduct = {
-    id: products.length + 1,
-    ...productData,
+async function createProduct(data) {
+  const result = await productModel.createProduct(data);
+
+  return {
+    _id: result.insertedId,
+    ...data,
   };
-
-  products.push(newProduct);
-
-  return newProduct;
 }
 
-function getAllProducts() {
-  return products;
+async function getAllProducts() {
+  return await productModel.getAllProducts();
 }
 
-function getProductById(id) {
-  return products.find((product) => product.id === Number(id));
+async function getProductById(id) {
+  return await productModel.getProductById(id);
 }
 
-function updateProduct(id, data) {
-  const product = products.find((product) => product.id === Number(id));
+async function updateProduct(id, data) {
+  await productModel.updateProduct(id, data);
 
-  if (!product) return null;
-
-  Object.assign(product, data);
-
-  return product;
+  return await productModel.getProductById(id);
 }
 
-function deleteProduct(id) {
-  const index = products.findIndex((product) => product.id === Number(id));
-
-  if (index === -1) return null;
-
-  return products.splice(index, 1)[0];
+async function deleteProduct(id) {
+  return await productModel.deleteProduct(id);
 }
 
 module.exports = {

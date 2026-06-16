@@ -1,52 +1,28 @@
 const productService = require("../services/product.service");
 
-function createProduct(req, res) {
-  const product = productService.createProduct(req.body);
+async function createProduct(req, res) {
+  const product = await productService.createProduct(req.body);
 
   res.status(201).json(product);
 }
 
-function getAllProducts(req, res) {
-  const products = productService.getAllProducts();
-
-  res.json(products);
+async function getAllProducts(req, res) {
+  res.json(await productService.getAllProducts());
 }
 
-function getProductById(req, res) {
-  const product = productService.getProductById(req.params.id);
-
-  if (!product) {
-    return res.status(404).json({
-      message: "Product not found",
-    });
-  }
-
-  res.json(product);
+async function getProductById(req, res) {
+  res.json(await productService.getProductById(req.params.id));
 }
 
-function updateProduct(req, res) {
-  const product = productService.updateProduct(req.params.id, req.body);
-
-  if (!product) {
-    return res.status(404).json({
-      message: "Product not found",
-    });
-  }
-
-  res.json(product);
+async function updateProduct(req, res) {
+  res.json(await productService.updateProduct(req.params.id, req.body));
 }
 
-function deleteProduct(req, res) {
-  const product = productService.deleteProduct(req.params.id);
-
-  if (!product) {
-    return res.status(404).json({
-      message: "Product not found",
-    });
-  }
+async function deleteProduct(req, res) {
+  await productService.deleteProduct(req.params.id);
 
   res.json({
-    message: "Product deleted",
+    message: "Product Deleted",
   });
 }
 
